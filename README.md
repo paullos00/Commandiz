@@ -4,6 +4,10 @@ O **Commandiz** é um aplicativo mobile desenvolvido para facilitar a realizaç�
 
 O projeto está sendo desenvolvido como um **MVP (Minimum Viable Product)**, com foco em uma boa experiência do usuário, interface moderna e um fluxo de pedidos funcional.
 
+## 📁 Documentações
+- 📄 Plano de Desenvolvimento: https://docs.google.com/document/d/1BO4746ZQ5tLv2X2dCJk5gd72U82ts89vVApeRRpmYZA/edit?usp=sharing
+-
+  
 ## 🚀 Funcionalidades
 
 - 🏠 Tela inicial
