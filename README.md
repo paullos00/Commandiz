@@ -6,7 +6,7 @@ O projeto está sendo desenvolvido como um **MVP (Minimum Viable Product)**, com
 
 ## 📁 Documentações
 - 📄 Plano de Desenvolvimento: https://docs.google.com/document/d/1BO4746ZQ5tLv2X2dCJk5gd72U82ts89vVApeRRpmYZA/edit?usp=sharing
--
+- 🖌️ Design: https://www.figma.com/proto/hyFuuZluegND2tAl5HIbVP/App-Espeto-Brutus?node-id=0-1&t=2Bn07RZlxNjg0Ps4-1
   
 ## 🚀 Funcionalidades
 
