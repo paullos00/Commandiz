@@ -10,16 +10,22 @@ O projeto está sendo desenvolvido como um **MVP (Minimum Viable Product)**, com
   
 ## 🚀 Funcionalidades
 
-- 🏠 Tela inicial
-- 📋 Catálogo de produtos
-- 🔎 Categorias e busca
-- 🛒 Carrinho de pedidos
-- ➕ Adição e remoção de produtos
-- ❤️ Produtos favoritos
-- 🎁 Promoções
-- 👤 Perfil do usuário
-- 📦 Finalização de pedidos
-- ⭐ Sistema de fidelidade
+- 🏠 Tela Inicial: Boas-vindas acolhedoras com tudo o que você precisa à mão.
+- 📜 Cardápio Completo: Navegue por delícias preparadas especialmente para você.
+- 🏷️ Categorias: Encontre seus desejos mais rápido, tudo bem organizado!
+- 🔍 Detalhes do Produto: Olhe bem de pertinho e monte do seu jeitinho.
+- 🎀 Favoritos: Guarde em um cantinho especial os pratos que mais amo!
+- 🛒 Carrinho: Seu cantinho de gostosuras pronto para o pedido.
+- ➕ Ajuste de Quantidade: Leve um, dois ou quantos o seu coração pedir!
+- 🛍️ Checkout Simulado: Finalize suas compras sem complicação.
+- 🏷️ Cupons e Mimos: Descontos e promoções imperdíveis para aproveitar.
+- 👤 Seu Perfil: Um cantinho totalmente seu com suas informações.
+- 👑 Commandiz Club: Nosso clube de fidelidade cheio de recompensas fofas!
+- 📍 Sobre a Casa: Informações importantes e horários do estabelecimento.
+- 📜 Histórico de Pedidos: Para relembrar e pedir de novos seus pigmentos favoritos.
+- 💳 Pagamento Descomplicado: Escolha a forma de pagamento que preferir.
+- 🔔 Notificações: Acompanhe tudo em tempo real para não perder nada!
+- ⭐ Avaliações: Conte para a gente o quanto amo seus produtos e seu pedido!
 
 ## 🛠️ Tecnologias
 
