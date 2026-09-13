@@ -24,10 +24,9 @@ O projeto está sendo desenvolvido como um **MVP (Minimum Viable Product)**, com
 ## 🛠️ Tecnologias
 
 - **Kotlin** — linguagem principal do projeto
-- **React Native** — desenvolvimento da interface
+- **Expo** - ferramenta de desenvolvimento e emulação em dispositivo móvel
 - **Material 3** — componentes e design da interface
 - **Android SDK** — plataforma de desenvolvimento
-- **Android Studio** — ambiente de desenvolvimento
 - **Git / GitHub** — controle de versão
 
 ## 📱 Plataforma
