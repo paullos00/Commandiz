@@ -1,38 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import Header from '../../components/header';
 import CartItem from '../../components/cart-item';
+import { useCart } from '../../context/cart-context';
+import { formatBRL } from '../../data/menu';
 import { Colors, Typography, Spacing } from '../../constants/theme';
 
-type CartLine = {
-  id: string;
-  title: string;
-  price: number;
-  quantity: number;
-  image: any;
-};
-
-const INITIAL_CART: CartLine[] = [
-  { id: '1', title: 'Kafta', price: 9, quantity: 2, image: require('../../assets/images/kafta.jpg') },
-  { id: '2', title: 'Picanha', price: 20, quantity: 1, image: require('../../assets/images/picanha.jpg') },
-];
-
 export default function CartScreen() {
-  const [items, setItems] = useState(INITIAL_CART);
+  const { items, increase, decrease, remove, subtotal } = useCart();
   const [coupon, setCoupon] = useState('');
 
-  const increase = (id: string) =>
-    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, quantity: i.quantity + 1 } : i)));
-
-  const decrease = (id: string) =>
-    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, quantity: Math.max(1, i.quantity - 1) } : i)));
-
-  const remove = (id: string) => setItems((prev) => prev.filter((i) => i.id !== id));
-
-  const formatBRL = (value: number) => `R$ ${value.toFixed(2).replace('.', ',')}`;
-
-  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const desconto = coupon.trim().toUpperCase() === 'BRUTUS10' ? subtotal * 0.1 : 0;
   const total = subtotal - desconto;
 
@@ -86,7 +65,7 @@ export default function CartScreen() {
       </ScrollView>
 
       {items.length > 0 && (
-        <TouchableOpacity style={styles.checkoutButton}>
+        <TouchableOpacity style={styles.checkoutButton} onPress={() => router.push('/checkout')}>
           <Text style={styles.checkoutText}>Finalizar pedido — {formatBRL(total)}</Text>
         </TouchableOpacity>
       )}

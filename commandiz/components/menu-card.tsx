@@ -3,18 +3,14 @@ import { Pressable, View, Text, Image, StyleSheet, ImageSourcePropType } from 'r
 import { router } from 'expo-router';
 import { Colors, Typography, Spacing } from '../constants/theme';
 
-type MenuCardProps = {
-  title: string;
-  desc: string;
-  price: string;
-  image: ImageSourcePropType;
-};
+type MenuCardProps = { id: string; title: string; desc: string; price: string; image: ImageSourcePropType };
 
-export default function MenuCard({ title, desc, price, image }: MenuCardProps) {
+export default function MenuCard({ id, title, desc, price, image }: MenuCardProps) {
   return (
+    
     <Pressable
       style={styles.card}
-      onPress={() => router.push({ pathname: '/modal', params: { title, desc, price } })}
+      onPress={() => router.push({ pathname: '/modal', params: { id } })}
     >
       <View style={styles.info}>
         <Text style={styles.title}>{title}</Text>

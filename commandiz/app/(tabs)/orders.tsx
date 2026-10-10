@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../components/header';
 import OrderCard, { OrderStatus } from '../../components/order-card';
+import LoadingState from '../../components/loading-state';
 import { Colors, Typography, Spacing } from '../../constants/theme';
 
 type Order = {
@@ -30,6 +31,13 @@ const FILTERS: { key: 'todos' | OrderStatus; label: string }[] = [
 
 export default function OrdersScreen() {
   const [filter, setFilter] = useState<'todos' | OrderStatus>('todos');
+  const [loading, setLoading] = useState(true);
+
+  // Simula a espera da API. Quando o backend existir, troque por uma requisição.
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 600);
+    return () => clearTimeout(t);
+  }, []);
 
   const filteredOrders = filter === 'todos' ? ORDERS : ORDERS.filter((o) => o.status === filter);
 
@@ -40,6 +48,7 @@ export default function OrdersScreen() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
+        style={styles.filterScroll}
         contentContainerStyle={styles.filterRow}
       >
         {FILTERS.map((f) => {
@@ -57,7 +66,9 @@ export default function OrdersScreen() {
       </ScrollView>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {filteredOrders.length === 0 ? (
+        {loading ? (
+          <LoadingState message="Buscando seus pedidos..." />
+        ) : filteredOrders.length === 0 ? (
           <Text style={styles.emptyText}>Nenhum pedido nessa categoria.</Text>
         ) : (
           filteredOrders.map((order) => (
@@ -78,7 +89,8 @@ export default function OrdersScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.brand.background },
-  filterRow: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, gap: Spacing.sm },
+  filterScroll: { flexGrow: 0 },
+  filterRow: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm },
   filterChip: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,

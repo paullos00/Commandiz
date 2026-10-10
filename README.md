@@ -45,6 +45,15 @@ O objetivo do projeto é desenvolver uma aplicação mobile moderna e intuitiva,
 
 Novas funcionalidades e melhorias serão adicionadas conforme a evolução do projeto.
 
+## ✅ Escopo do MVP
+
+**Concluído:** tela inicial, cardápio com categorias, detalhes do produto,
+carrinho com quantidade e cupom, checkout simulado com forma de pagamento,
+histórico de pedidos, promoções, perfil/Commandiz Club e sobre a casa.
+
+**Próxima versão:** favoritos, notificações em tempo real
+e avaliações de pedidos.
+
 ## 👥 Equipe
 
 Projeto desenvolvido por:

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Clipboard from 'expo-clipboard';
 import Header from '../../components/header';
 import PromoCard from '../../components/promo-card';
+import LoadingState from '../../components/loading-state';
 import { Colors, Typography, Spacing } from '../../constants/theme';
 
 const HERO_BANNER = require('../../assets/images/promo-banner.jpeg');
@@ -33,6 +34,14 @@ const PROMOTIONS = [
 ];
 
 export default function PromoScreen() {
+  const [loading, setLoading] = useState(true);
+
+  // Simula a espera da API. Quando o backend existir, troque por uma requisição.
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 600);
+    return () => clearTimeout(t);
+  }, []);
+
   const handleCopy = async (code: string) => {
     await Clipboard.setStringAsync(code);
     Alert.alert('Cupom copiado!', `O código "${code}" foi copiado.`);
@@ -53,16 +62,22 @@ export default function PromoScreen() {
 
         <Text style={styles.sectionLabel}>Disponíveis para você</Text>
 
-        {PROMOTIONS.map((promo) => (
-          <PromoCard
-            key={promo.id}
-            title={promo.title}
-            description={promo.description}
-            code={promo.code}
-            expiresAt={promo.expiresAt}
-            onCopy={handleCopy}
-          />
-        ))}
+        {loading ? (
+          <LoadingState message="Buscando promoções..." />
+        ) : PROMOTIONS.length === 0 ? (
+          <Text style={styles.emptyText}>Nenhuma promoção disponível no momento.</Text>
+        ) : (
+          PROMOTIONS.map((promo) => (
+            <PromoCard
+              key={promo.id}
+              title={promo.title}
+              description={promo.description}
+              code={promo.code}
+              expiresAt={promo.expiresAt}
+              onCopy={handleCopy}
+            />
+          ))
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -96,4 +111,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: Spacing.sm,
   },
+  emptyText: { ...Typography.body, color: Colors.brand.textMuted, textAlign: 'center', marginTop: Spacing.lg },
 });
