@@ -1,0 +1,19 @@
+# segredos e dados
+.env
+.env.*
+!.env.example
+*.db
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Node / Expo
+node_modules/
+.expo/
+dist/
+
+# Editor / ferramentas
+.idea/
+.claude/
