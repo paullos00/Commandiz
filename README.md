@@ -47,9 +47,16 @@ O **Commandiz** é um aplicativo mobile para fazer e acompanhar pedidos de uma e
 ## Plataforma
 
 Android (testado com o Expo Go, SDK 54, e com APK gerado pelo EAS Build).
+## ✅ Escopo do MVP
 
-## Equipe
+**Concluído:** tela inicial, cardápio com categorias, detalhes do produto,
+carrinho com quantidade e cupom, checkout simulado com forma de pagamento,
+histórico de pedidos, promoções, perfil/Commandiz Club e sobre a casa.
 
+**Próxima versão:** favoritos, notificações em tempo real
+e avaliações de pedidos.
+
+## 👥 Equipe
 - Giulia Zacharias Belatini
 - João Pedro da Silva Santos
 - Leticia Andrade de Carvalho
