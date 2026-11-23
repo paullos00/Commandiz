@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic-settings
+PyJWT
+bcrypt
+sentry-sdk[fastapi]
+redis
+# Driver do PostgreSQL (só é necessário no servidor publicado, que é Linux)
+psycopg[binary]; sys_platform != "win32"

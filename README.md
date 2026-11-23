@@ -1,56 +1,52 @@
-# Commandiz 
+# Commandiz
 
-O **Commandiz** é um aplicativo mobile desenvolvido para facilitar a realização e o gerenciamento de pedidos de forma simples, rápida e intuitiva.
+O **Commandiz** é um aplicativo mobile para fazer e acompanhar pedidos de uma espetaria de forma simples, rápida e intuitiva. O projeto é um **MVP (Minimum Viable Product)** desenvolvido para fins acadêmicos.
 
-O projeto está sendo desenvolvido como um **MVP (Minimum Viable Product)**, com foco em uma boa experiência do usuário, interface moderna e um fluxo de pedidos funcional.
+## Documentações
 
-## 📁 Documentações
-- 📄 Plano de Desenvolvimento: https://docs.google.com/document/d/1BO4746ZQ5tLv2X2dCJk5gd72U82ts89vVApeRRpmYZA/edit?usp=sharing
-- 🖌️ Design: https://www.figma.com/proto/hyFuuZluegND2tAl5HIbVP/App-Espeto-Brutus?node-id=0-1&t=2Bn07RZlxNjg0Ps4-1
-  
-## 🚀 Funcionalidades
+- Plano de Desenvolvimento: https://docs.google.com/document/d/1BO4746ZQ5tLv2X2dCJk5gd72U82ts89vVApeRRpmYZA/edit?usp=sharing
+- Design: https://www.figma.com/proto/hyFuuZluegND2tAl5HIbVP/App-Espeto-Brutus?node-id=0-1&t=2Bn07RZlxNjg0Ps4-1
+- Como rodar o projeto: [COMO-RODAR.md](COMO-RODAR.md)
+- Publicar o backend: [DEPLOY.md](DEPLOY.md) • Gerar o APK: [APK.md](APK.md) • Demonstração e entrega: [ENTREGA.md](ENTREGA.md)
 
-- 🏠 Tela Inicial: Boas-vindas acolhedoras com tudo o que você precisa à mão.
-- 📜 Cardápio Completo: Navegue por delícias preparadas especialmente para você.
-- 🏷️ Categorias: Encontre seus desejos mais rápido, tudo bem organizado!
-- 🔍 Detalhes do Produto: Olhe bem de pertinho e monte do seu jeitinho.
-- 🎀 Favoritos: Guarde em um cantinho especial os pratos que mais amo!
-- 🛒 Carrinho: Seu cantinho de gostosuras pronto para o pedido.
-- ➕ Ajuste de Quantidade: Leve um, dois ou quantos o seu coração pedir!
-- 🛍️ Checkout Simulado: Finalize suas compras sem complicação.
-- 🏷️ Cupons e Mimos: Descontos e promoções imperdíveis para aproveitar.
-- 👤 Seu Perfil: Um cantinho totalmente seu com suas informações.
-- 👑 Commandiz Club: Nosso clube de fidelidade cheio de recompensas fofas!
-- 📍 Sobre a Casa: Informações importantes e horários do estabelecimento.
-- 📜 Histórico de Pedidos: Para relembrar e pedir de novos seus pigmentos favoritos.
-- 💳 Pagamento Descomplicado: Escolha a forma de pagamento que preferir.
-- 🔔 Notificações: Acompanhe tudo em tempo real para não perder nada!
-- ⭐ Avaliações: Conte para a gente o quanto amo seus produtos e seu pedido!
+## Funcionalidades
 
-## 🛠️ Tecnologias
+**Cliente**
 
-- **Kotlin** — linguagem principal do projeto
-- **Expo** - ferramenta de desenvolvimento e emulação de dispositivos móvel
-- **Material 3** — componentes e design da interface
-- **Android SDK** — plataforma de desenvolvimento
-- **Git / GitHub** — controle de versão
+- Cadastro, login seguro (senha + JWT), **recuperação de senha por e-mail** e perfil (dados, **troca de e-mail** e de senha)
+- Cardápio com **categorias**, **detalhes do produto** (quantidade e observação) e fotos
+- Favoritos e carrinho com ajuste de quantidade
+- **Cupons de desconto** e fechamento do pedido com pagamento simulado (Pix, Cartão ou Dinheiro com cálculo de troco)
+- Histórico de pedidos com **status em tempo real** e **notificações**
+- **Avaliações** dos pedidos
+- **Commandiz Club**: pontos, níveis e resgate de recompensas
+- **Sobre a Casa**: horários, contato e "aberto agora"
 
-## 📱 Plataforma
+**Administrador** (e-mails em `ADMIN_EMAILS`)
 
-O Commandiz está sendo desenvolvido inicialmente para:
+- Acompanhar pedidos e mudar o status (Recebido → Em preparo → Pronto → Entregue)
+- Cadastrar e editar espetos, combos, categorias (com foto) e cupons
 
-- Android
+## Tecnologias
 
-## 🎯 Objetivo
+**App (`frontend/commandiz`)**
 
-O objetivo do projeto é desenvolver uma aplicação mobile moderna e intuitiva, proporcionando uma experiência simples para usuários realizarem pedidos e acompanharem suas informações dentro da plataforma.
+- Expo / React Native com TypeScript e Expo Router
+- Axios (com interceptadores) e TanStack Query
+- Expo SecureStore e Expo Constants
+- Sentry (opcional)
 
-## 📌 Status do projeto
+**Backend (`backend`)**
 
-🚧 **Em desenvolvimento — MVP**
+- Python com FastAPI (documentação automática em `/docs`), Pydantic e pydantic-settings
+- SQLAlchemy com SQLite (desenvolvimento) e PostgreSQL (produção)
+- PyJWT e bcrypt (autenticação)
+- Redis (cache e limite de tentativas) e Sentry (opcionais)
+- Testes automáticos com pytest
 
-Novas funcionalidades e melhorias serão adicionadas conforme a evolução do projeto.
+## Plataforma
 
+Android (testado com o Expo Go, SDK 54, e com APK gerado pelo EAS Build).
 ## ✅ Escopo do MVP
 
 **Concluído:** tela inicial, cardápio com categorias, detalhes do produto,
@@ -61,16 +57,12 @@ histórico de pedidos, promoções, perfil/Commandiz Club e sobre a casa.
 e avaliações de pedidos.
 
 ## 👥 Equipe
-
-Projeto desenvolvido por:
-
 - Giulia Zacharias Belatini
 - João Pedro da Silva Santos
 - Leticia Andrade de Carvalho
 - Nicolas Ribeiro Campos
 - Paulo Sérgio Andrade dos Santos
-  
 
-## 📄 Licença
+## Licença
 
-Este projeto foi desenvolvido inicialmente para fins acadêmicos.
+Este projeto foi desenvolvido para fins acadêmicos. Veja o arquivo [LICENSE](LICENSE).
