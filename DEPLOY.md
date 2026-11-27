@@ -27,7 +27,7 @@ Antes do `git add .`, confirme com `git status` que **não aparecem** `.env` nem
 - `https://SEU-SERVICO.onrender.com/docs` → Swagger
 
 ## 5. Apontar o app
-No `frontend/commandiz/.env`: `EXPO_PUBLIC_API_URL=https://SEU-SERVICO.onrender.com` e reinicie o Expo (`npx expo start -c`).
+No `frontend/.env`: `EXPO_PUBLIC_API_URL=https://SEU-SERVICO.onrender.com` e reinicie o Expo (`npx expo start -c`).
 
 ## Cuidados
 - Planos gratuitos "dormem" após um tempo sem uso: o primeiro acesso pode levar cerca de 1 minuto.

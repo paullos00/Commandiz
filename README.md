@@ -29,7 +29,7 @@ O **Commandiz** é um aplicativo mobile para fazer e acompanhar pedidos de uma e
 
 ## Tecnologias
 
-**App (`frontend/commandiz`)**
+**App (`frontend`)**
 
 - Expo / React Native com TypeScript e Expo Router
 - Axios (com interceptadores) e TanStack Query

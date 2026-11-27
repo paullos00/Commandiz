@@ -5,14 +5,14 @@ from datetime import timedelta
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select, update
+from sqlalchemy import delete, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 import schemas
 from auth import admin_atual
 from database import get_db
-from models import Categoria, Combo, Cupom, Espeto, Pedido, agora_naive
+from models import Categoria, Combo, Cupom, Espeto, ItemCarrinho, Pedido, agora_naive, favoritos
 from redis_cliente import cache_apagar
 from servicos import montar_pedido_admin, mudar_status
 
@@ -107,6 +107,20 @@ def editar_espeto(espeto_id: int, dados: schemas.ProdutoAdminIn, db: Session = D
     return espeto
 
 
+@router.delete("/espetos/{espeto_id}", response_model=schemas.MensagemOut)
+def excluir_espeto(espeto_id: int, db: Session = Depends(get_db)):
+    espeto = db.get(Espeto, espeto_id)
+    if espeto is None:
+        raise HTTPException(status_code=404, detail="Espeto não encontrado")
+
+    db.execute(delete(ItemCarrinho).where(ItemCarrinho.espeto_id == espeto_id))
+    db.execute(delete(favoritos).where(favoritos.c.espeto_id == espeto_id))
+    db.delete(espeto)
+    db.commit()
+    cache_apagar("espetos")
+    return {"mensagem": "Espeto excluído"}
+
+
 @router.post("/combos", response_model=schemas.ComboAdminOut, status_code=201)
 def criar_combo(dados: schemas.ProdutoAdminIn, db: Session = Depends(get_db)):
     if not dados.nome or dados.preco is None:
@@ -134,11 +148,24 @@ def editar_combo(combo_id: int, dados: schemas.ProdutoAdminIn, db: Session = Dep
     return combo
 
 
+@router.delete("/combos/{combo_id}", response_model=schemas.MensagemOut)
+def excluir_combo(combo_id: int, db: Session = Depends(get_db)):
+    combo = db.get(Combo, combo_id)
+    if combo is None:
+        raise HTTPException(status_code=404, detail="Combo não encontrado")
+
+    db.execute(delete(ItemCarrinho).where(ItemCarrinho.combo_id == combo_id))
+    db.delete(combo)
+    db.commit()
+    cache_apagar("combos")
+    return {"mensagem": "Combo excluído"}
+
+
 # ---------- Categorias ----------
 
 @router.post("/categorias", response_model=schemas.CategoriaOut, status_code=201)
 def criar_categoria(dados: schemas.CategoriaAdminIn, db: Session = Depends(get_db)):
-    categoria = Categoria(nome=dados.nome, ordem=dados.ordem)
+    categoria = Categoria(nome=dados.nome, ordem=dados.ordem, visivel=dados.visivel)
     db.add(categoria)
     try:
         db.commit()

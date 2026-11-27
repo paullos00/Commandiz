@@ -206,6 +206,7 @@ class ClienteOut(BaseModel):
     nome: str
     email: str
     telefone: str
+    foto: Optional[str] = None
 
     @computed_field
     @property
@@ -339,6 +340,7 @@ class PedidoOut(BaseModel):
 class PerfilIn(BaseModel):
     nome: str
     telefone: str
+    foto: Optional[str] = None
 
     @field_validator("nome", "telefone")
     @classmethod
@@ -476,6 +478,7 @@ class CategoriaOut(BaseModel):
     id: int
     nome: str
     ordem: int = 0
+    visivel: bool = True
 
 
 # ---------- CUPONS ----------
@@ -661,6 +664,7 @@ class ComboAdminOut(ComboOut):
 class CategoriaAdminIn(BaseModel):
     nome: str
     ordem: int = 0
+    visivel: bool = True
 
     @field_validator("nome")
     @classmethod

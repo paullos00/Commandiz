@@ -35,6 +35,7 @@ class Cliente(Base):
     email = Column(String(120), unique=True, nullable=False)
     telefone = Column(String(20), nullable=False)
     senha_hash = Column(String(128))  # nunca guardamos a senha, só o "embaralhado" (bcrypt)
+    foto = Column(Text)
 
     espetos_favoritos = relationship("Espeto", secondary=favoritos, backref="clientes_favoritaram")
     carrinho = relationship(
@@ -194,6 +195,7 @@ class Categoria(Base):
     id = Column(Integer, primary_key=True)
     nome = Column(String(60), unique=True, nullable=False)
     ordem = Column(Integer, nullable=False, default=0)
+    visivel = Column(Boolean, nullable=False, default=True)
 
 
 class Cupom(Base):

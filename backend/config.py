@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     TOKEN_EXPIRA_MINUTOS: int = 10080  # 7 dias
     SENTRY_DSN: str = ""  # vazio = Sentry desligado
     REDIS_URL: str = ""  # vazio = Redis desligado
-    # Pix (QR Code de pagamento). Sem PIX_CHAVE, o pedido em Pix funciona, mas sem QR Code.
+    # Pix (QR Code de pagamento). Necessário para aceitar pedidos em Pix.
     # PIX_CHAVE: CPF/CNPJ (só números), e-mail, celular no formato +5511999999999 ou chave aleatória.
     PIX_CHAVE: str = ""
     PIX_NOME_RECEBEDOR: str = "Commandiz Espetaria"  # até 25 letras (sem acento)
