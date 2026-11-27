@@ -5,7 +5,7 @@ O projeto tem **duas partes** que rodam ao mesmo tempo, cada uma no seu terminal
 | Parte | Pasta | O que é |
 |---|---|---|
 | Backend (a "cozinha") | `backend` | API em Python (FastAPI) que guarda cardápio, clientes e pedidos |
-| App (o "cardápio") | `frontend/commandiz` | App de celular em Expo (React Native) |
+| App (o "cardápio") | `frontend` | App de celular em Expo (React Native) |
 
 ## Parte 0: Instalar os programas (uma vez só)
 
@@ -81,7 +81,7 @@ Se aparecer a lista, o celular enxerga o PC.
 No novo terminal:
 
 ```
-cd frontend/commandiz
+cd frontend
 npm install
 cp .env.example .env
 ```
@@ -94,7 +94,7 @@ npx expo install react-native-svg expo-clipboard
 npm install react-native-qrcode-svg
 ```
 
-3. Abra `frontend/commandiz/.env` e troque o IP:
+3. Abra `frontend/.env` e troque o IP:
 
 ```
 EXPO_PUBLIC_API_URL=http://192.168.1.93:5000
@@ -127,9 +127,9 @@ São só dois terminais, sempre nestas pastas:
 | Terminal | Comandos |
 |---|---|
 | 1 | `cd backend` e `python main.py` |
-| 2 | `cd frontend/commandiz` e `npx expo start -c` |
+| 2 | `cd frontend` e `npx expo start -c` |
 
-Se o IP do PC mudar, atualize o `frontend/commandiz/.env`.
+Se o IP do PC mudar, atualize o `frontend/.env`.
 
 ## Problemas comuns
 
@@ -138,7 +138,7 @@ Se o IP do PC mudar, atualize o `frontend/commandiz/.env`.
 | `python` não é reconhecido | Reinstale o Python marcando "Add python.exe to PATH" |
 | `No module named ...` | Rode `python -m pip install -r requirements.txt` na pasta `backend` |
 | `SECRET_KEY ... Field required` | Falta a linha `SECRET_KEY=` no `backend/.env` |
-| Expo: `package.json does not exist` | Você está na pasta errada. Entre em `frontend/commandiz` |
+| Expo: `package.json does not exist` | Você está na pasta errada. Entre em `frontend` |
 | Expo Go: "incompatible SDK" | O Expo Go precisa ser o de **SDK 54** (link da Parte 0) |
 | App: "Não consegui falar com o servidor" | Backend desligado, IP errado no `.env` do app, ou celular em outra rede Wi-Fi |
 | O celular não abre `http://IP:5000` | Libere o Python no Firewall do Windows e use `http://` (sem "s") |

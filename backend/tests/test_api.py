@@ -47,6 +47,18 @@ def test_registro_login_e_me(client):
     assert me.json()["admin"] is False
 
 
+def test_atualiza_foto_do_perfil(client, cliente):
+    foto = "data:image/jpeg;base64,/9j/4AAQ"
+    resposta = client.patch(
+        "/auth/me",
+        json={"nome": "Cliente Atualizado", "telefone": "11999999999", "foto": foto},
+        headers=cliente["headers"],
+    )
+
+    assert resposta.status_code == 200
+    assert resposta.json()["foto"] == foto
+
+
 def test_senha_errada_e_email_repetido(client, cliente):
     r = client.post("/auth/login", json={"email": cliente["email"], "senha": "errada!"})
     assert r.status_code == 401
@@ -90,6 +102,28 @@ def test_carrinho_com_observacao(client, cliente):
     carrinho = client.get(f"/clientes/{cliente['id']}/carrinho", headers=cliente["headers"]).json()
     assert carrinho["total"] == pytest.approx(19.8)
     assert carrinho["itens"][0]["observacao"] == "sem cebola"
+
+
+def test_carrinho_aceita_espetos_e_combos_do_cardapio(client, cliente):
+    itens = [
+        {"espeto_id": 2},
+        {"espeto_id": 3},
+        {"combo_id": 1},
+    ]
+    for item in itens:
+        resposta = client.post(
+            f"/clientes/{cliente['id']}/carrinho/itens",
+            json=item,
+            headers=cliente["headers"],
+        )
+        assert resposta.status_code == 201, resposta.text
+
+    carrinho = client.get(f"/clientes/{cliente['id']}/carrinho", headers=cliente["headers"]).json()
+    assert {item["nome"] for item in carrinho["itens"]} == {
+        "Espeto de Frango",
+        "Espeto de Queijo",
+        "Combo Casal",
+    }
 
 
 def test_pedido_dinheiro_com_troco(client, cliente):
@@ -253,6 +287,112 @@ def test_admin_cria_e_desativa_espeto(client, admin):
     assert not any(e["id"] == novo["id"] for e in client.get("/espetos").json())
 
 
+def test_admin_exclui_espeto_e_remove_carrinho_e_favorito(client, admin, cliente):
+    criado = client.post(
+        "/admin/espetos",
+        json={"nome": "Espeto para excluir", "preco": 10},
+        headers=admin["headers"],
+    )
+    assert criado.status_code == 201, criado.text
+    espeto_id = criado.json()["id"]
+
+    adicionar_item(client, cliente, espeto_id=espeto_id)
+    favorito = client.post(
+        f"/clientes/{cliente['id']}/favoritos",
+        json={"espeto_id": espeto_id},
+        headers=cliente["headers"],
+    )
+    assert favorito.status_code == 200
+
+    excluido = client.delete(f"/admin/espetos/{espeto_id}", headers=admin["headers"])
+    assert excluido.status_code == 200
+    assert not any(item["id"] == espeto_id for item in client.get("/espetos").json())
+    assert client.get(f"/clientes/{cliente['id']}/carrinho", headers=cliente["headers"]).json()["itens"] == []
+    assert client.get(f"/clientes/{cliente['id']}/favoritos", headers=cliente["headers"]).json() == []
+
+
+def test_admin_exclui_combo_no_carrinho(client, admin, cliente):
+    criado = client.post(
+        "/admin/combos",
+        json={"nome": "Combo para excluir", "preco": 20},
+        headers=admin["headers"],
+    )
+    assert criado.status_code == 201, criado.text
+    combo_id = criado.json()["id"]
+
+    adicionado = client.post(
+        f"/clientes/{cliente['id']}/carrinho/itens",
+        json={"combo_id": combo_id, "quantidade": 1},
+        headers=cliente["headers"],
+    )
+    assert adicionado.status_code == 201, adicionado.text
+
+    excluido = client.delete(f"/admin/combos/{combo_id}", headers=admin["headers"])
+    assert excluido.status_code == 200
+    assert client.get(f"/clientes/{cliente['id']}/carrinho", headers=cliente["headers"]).json()["itens"] == []
+
+
+def test_admin_cria_e_exclui_categoria(client, admin):
+    criada = client.post(
+        "/admin/categorias",
+        json={"nome": "Categoria temporária"},
+        headers=admin["headers"],
+    )
+    assert criada.status_code == 201, criada.text
+    categoria_id = criada.json()["id"]
+    assert any(categoria["id"] == categoria_id for categoria in client.get("/categorias").json())
+
+    excluida = client.delete(f"/admin/categorias/{categoria_id}", headers=admin["headers"])
+    assert excluida.status_code == 200
+    assert all(categoria["id"] != categoria_id for categoria in client.get("/categorias").json())
+
+
+def test_admin_define_visibilidade_da_categoria(client, admin):
+    criada = client.post(
+        "/admin/categorias",
+        json={"nome": "Categoria oculta", "visivel": False},
+        headers=admin["headers"],
+    )
+    assert criada.status_code == 201, criada.text
+    categoria_id = criada.json()["id"]
+    assert criada.json()["visivel"] is False
+
+    categorias_publicas = client.get("/categorias").json()
+    assert all(categoria["id"] != categoria_id for categoria in categorias_publicas)
+
+    categorias_admin = client.get("/admin/cardapio", headers=admin["headers"]).json()["categorias"]
+    assert any(categoria["id"] == categoria_id and categoria["visivel"] is False for categoria in categorias_admin)
+
+
+def test_admin_cadastra_bebida_e_cliente_adiciona_ao_carrinho(client, admin, cliente):
+    categorias = client.get("/categorias").json()
+    categoria_bebidas = next((c for c in categorias if c["nome"].casefold() == "bebidas"), None)
+    assert categoria_bebidas is not None
+
+    dados = {
+        "nome": "Refrigerante Lata",
+        "descricao": "Lata 350 ml",
+        "preco": 6.5,
+        "categoria_id": categoria_bebidas["id"],
+    }
+    sem_permissao = client.post("/admin/espetos", json=dados, headers=cliente["headers"])
+    assert sem_permissao.status_code == 403
+
+    criado = client.post("/admin/espetos", json=dados, headers=admin["headers"])
+    assert criado.status_code == 201, criado.text
+    bebida = criado.json()
+    assert bebida["id"] in {item["id"] for item in client.get("/espetos").json()}
+
+    adicionada = client.post(
+        f"/clientes/{cliente['id']}/carrinho/itens",
+        json={"espeto_id": bebida["id"], "quantidade": 2},
+        headers=cliente["headers"],
+    )
+    assert adicionada.status_code == 201, adicionada.text
+    carrinho = client.get(f"/clientes/{cliente['id']}/carrinho", headers=cliente["headers"]).json()
+    assert any(item["nome"] == "Refrigerante Lata" and item["subtotal"] == pytest.approx(13.0) for item in carrinho["itens"])
+
+
 def test_admin_cria_cupom(client, admin):
     corpo = {"codigo": "TESTE20", "tipo": "percentual", "valor": 20, "descricao": "20%"}
     assert client.post("/admin/cupons", json=corpo, headers=admin["headers"]).status_code == 201
@@ -279,6 +419,19 @@ def test_pedido_pix_gera_codigo_copia_e_cola(client, cliente):
     # o código também aparece na lista de pedidos
     lista = client.get(f"/clientes/{cliente['id']}/pedidos", headers=cliente["headers"]).json()
     assert lista[0]["pix_copia_cola"] == codigo
+
+
+def test_pedido_pix_sem_chave_nao_fecha_pedido(client, cliente, monkeypatch):
+    import main
+
+    adicionar_item(client, cliente)
+    monkeypatch.setattr(main.settings, "PIX_CHAVE", "")
+
+    resposta = fechar_pedido(client, cliente, forma_pagamento="pix")
+
+    assert resposta.status_code == 503
+    carrinho = client.get(f"/clientes/{cliente['id']}/carrinho", headers=cliente["headers"]).json()
+    assert len(carrinho["itens"]) == 1
 
 
 def test_pedido_cartao_nao_tem_codigo_pix(client, cliente):

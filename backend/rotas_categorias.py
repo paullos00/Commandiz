@@ -21,7 +21,11 @@ def listar_categorias(db: Session = Depends(get_db)):
     if guardado is not None:
         return guardado
 
-    categorias = db.execute(select(Categoria).order_by(Categoria.ordem, Categoria.id)).scalars().all()
+    categorias = db.execute(
+        select(Categoria)
+        .where(Categoria.visivel.is_(True))
+        .order_by(Categoria.ordem, Categoria.id)
+    ).scalars().all()
     resposta = [schemas.CategoriaOut.model_validate(c).model_dump() for c in categorias]
     cache_gravar("categorias", resposta)
     return resposta

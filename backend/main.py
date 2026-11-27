@@ -30,7 +30,7 @@ from config import settings
 from database import Base, SessionLocal, engine, get_db
 from casa import INFORMACOES_DA_CASA
 from models import Carrinho, Categoria, Cliente, Combo, Cupom, CupomUso, Espeto, ItemCarrinho, ItemPedido, Pedido
-from redis_cliente import cache_gravar, cache_ler, limite_excedido, limpar_limite, status_redis
+from redis_cliente import cache_apagar, cache_gravar, cache_ler, limite_excedido, limpar_limite, status_redis
 from rotas_admin import router as rotas_admin
 from rotas_avaliacoes import router as rotas_avaliacoes
 from rotas_categorias import router as rotas_categorias
@@ -63,11 +63,13 @@ def _adicionar_coluna_se_faltar(tabela: str, coluna: str, tipo: str) -> None:
 def garantir_colunas() -> None:
     """Bancos criados antes de uma novidade não têm as colunas novas: adicionamos aqui."""
     _adicionar_coluna_se_faltar("clientes", "senha_hash", "VARCHAR(128)")
+    _adicionar_coluna_se_faltar("clientes", "foto", "TEXT")
     _adicionar_coluna_se_faltar("pedidos", "valor_pago", "NUMERIC(10, 2)")
     _adicionar_coluna_se_faltar("espetos", "categoria_id", "INTEGER")
     booleano = "BOOLEAN DEFAULT TRUE" if engine.dialect.name == "postgresql" else "BOOLEAN DEFAULT 1"
     _adicionar_coluna_se_faltar("espetos", "ativo", booleano)
     _adicionar_coluna_se_faltar("combos", "ativo", booleano)
+    _adicionar_coluna_se_faltar("categorias", "visivel", booleano)
     _adicionar_coluna_se_faltar("combos", "imagem", "VARCHAR(500)")
     _adicionar_coluna_se_faltar("pedidos", "cupom_codigo", "VARCHAR(30)")
     _adicionar_coluna_se_faltar("pedidos", "desconto", "NUMERIC(10, 2)")
@@ -117,6 +119,12 @@ def preparar_banco() -> None:
             ids = {c.nome: c.id for c in db.execute(select(Categoria)).scalars()}
             for espeto in db.execute(select(Espeto).where(Espeto.categoria_id.is_(None))).scalars():
                 espeto.categoria_id = ids["Especiais"] if "queijo" in espeto.nome.lower() else ids["Tradicionais"]
+
+        categorias = db.execute(select(Categoria)).scalars().all()
+        if not any(c.nome.strip().casefold() == "bebidas" for c in categorias):
+            ordem = max((c.ordem for c in categorias), default=0) + 1
+            db.add(Categoria(nome="Bebidas", ordem=ordem))
+            cache_apagar("categorias")
 
         # Cupons de exemplo (só na primeira vez). O administrador cria os verdadeiros.
         if db.scalar(select(Cupom.id).limit(1)) is None:
@@ -354,9 +362,11 @@ def atualizar_perfil(
     cliente: Cliente = Depends(cliente_atual),
     db: Session = Depends(get_db),
 ):
-    """Atualiza nome e telefone. O e-mail não muda (é o login)."""
+    """Atualiza nome, telefone e foto. O e-mail não muda (é o login)."""
     cliente.nome = dados.nome
     cliente.telefone = dados.telefone
+    if dados.foto is not None:
+        cliente.foto = dados.foto
     db.commit()
     db.refresh(cliente)
     return cliente
@@ -589,6 +599,12 @@ def fechar_pedido(
 
     if not carrinho.itens:
         raise HTTPException(status_code=409, detail="Seu carrinho está vazio")
+
+    if dados.forma_pagamento == "pix" and not settings.PIX_CHAVE.strip():
+        raise HTTPException(
+            status_code=503,
+            detail="Pagamento por Pix indisponível: a chave Pix da espetaria não está configurada.",
+        )
 
     subtotal = sum((item.preco_unitario * item.quantidade for item in carrinho.itens), Decimal("0.00"))
 

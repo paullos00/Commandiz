@@ -2,7 +2,7 @@
 
 Pré-requisito: backend publicado com HTTPS (veja DEPLOY.md).
 
-1. Conta grátis em **expo.dev** e, no terminal (pasta `frontend/commandiz`):
+1. Conta grátis em **expo.dev** e, no terminal (pasta `frontend`):
 ```
 npm install -g eas-cli
 eas login

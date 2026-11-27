@@ -1,4 +1,5 @@
 # segredos e dados
+arquivos proibidos/
 .env
 .env.*
 !.env.example
